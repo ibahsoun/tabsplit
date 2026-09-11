@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: tabsplit
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tabsplit-db
+          property: connectionString
+
+databases:
+  - name: tabsplit-db
+    plan: free
+    databaseName: tabsplit
+    user: tabsplit

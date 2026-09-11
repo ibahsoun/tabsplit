@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Tab</title>
+<meta name="theme-color" content="#FBFAF7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7;
+  --ink:#16192B;
+  --soft:#62667A;
+  --rule:#E4E0D6;
+  --blue:#2B44C7;
+  --blue-wash:#ECEEFB;
+  --yellow:#FFD84D;
+  --red:#C2382C;
+  --green:#157A57;
+  --pad:1.1rem;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:Archivo,system-ui,sans-serif;font-size:16px;line-height:1.45;
+  font-variant-numeric:tabular-nums;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3{font-family:"Bricolage Grotesque",Archivo,sans-serif;font-weight:700;margin:0;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:44rem;margin:0 auto;padding:0 var(--pad) 5rem}
+.hidden{display:none !important}
+
+/* ---------- start screen ---------- */
+.start{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:1.6rem;padding:2rem var(--pad)}
+.start h1{font-size:clamp(2.6rem,13vw,4rem);line-height:.95}
+.start h1 em{font-style:normal;background:linear-gradient(transparent 58%,var(--yellow) 58%);padding:0 .1em}
+.lede{color:var(--soft);max-width:32ch}
+.card{border:1.5px solid var(--ink);border-radius:.6rem;padding:1.1rem;background:#fff}
+.card + .card{margin-top:1rem}
+.card h2{font-size:1.15rem;margin-bottom:.7rem}
+
+/* ---------- forms ---------- */
+label{display:block;font-size:.82rem;font-weight:600;color:var(--soft);margin-bottom:.28rem}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:.62rem .7rem;border:1.5px solid var(--rule);border-radius:.4rem;
+  background:#fff;appearance:none;
+}
+textarea{min-height:7.5rem;resize:vertical;line-height:1.6}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,
+[role=tab]:focus-visible,.chip:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px}
+input:focus,select:focus,textarea:focus{border-color:var(--ink)}
+::placeholder{color:#9A9CAA;text-transform:none}
+.row{display:flex;gap:.6rem}
+.row > *{flex:1;min-width:0}
+.field{margin-bottom:.8rem}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  padding:.68rem 1.1rem;border:1.5px solid var(--ink);border-radius:.4rem;
+  background:var(--ink);color:var(--paper);font-weight:600;cursor:pointer;width:100%;
+}
+.btn.ghost{background:#fff;color:var(--ink)}
+.btn.small{width:auto;padding:.4rem .7rem;font-size:.85rem}
+.btn:disabled{opacity:.45;cursor:progress}
+.hint{font-size:.8rem;color:var(--soft);margin-top:.35rem}
+.err{color:var(--red);font-size:.86rem;margin-top:.6rem;font-weight:500}
+.err:empty{display:none}
+
+/* ---------- masthead ---------- */
+header.top{padding:1.4rem 0 .4rem;display:flex;align-items:flex-start;gap:.8rem;flex-wrap:wrap}
+header.top h1{font-size:1.5rem;flex:1;min-width:8rem}
+.chip{
+  font-size:.78rem;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--rule);
+  border-radius:2rem;padding:.3rem .7rem;background:#fff;cursor:pointer;white-space:nowrap;
+}
+.chip:hover{border-color:var(--ink)}
+
+/* ---------- hero ---------- */
+.tally{border-top:2.5px solid var(--ink);border-bottom:1.5px solid var(--rule);padding:.9rem 0 1rem;margin-bottom:.2rem}
+.tally .big{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:clamp(2.7rem,15vw,4.2rem);line-height:1;letter-spacing:-.035em}
+.tally .sub{color:var(--soft);font-size:.9rem;margin-top:.35rem}
+.tally .sub b{color:var(--ink);font-weight:600}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:.2rem;overflow-x:auto;padding:.7rem 0 .9rem;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+[role=tab]{
+  border:0;background:none;padding:.3rem .1rem;margin-right:1rem;cursor:pointer;
+  font-weight:600;color:var(--soft);white-space:nowrap;
+}
+[role=tab][aria-selected=true]{color:var(--ink);background:linear-gradient(transparent 62%,var(--yellow) 62%)}
+
+/* ---------- ledger rows ---------- */
+.ledger{border-top:1.5px solid var(--ink)}
+.line{display:flex;align-items:baseline;gap:.7rem;padding:.72rem 0;border-bottom:1px solid var(--rule)}
+.line .name{flex:1;min-width:0}
+.line .name strong{font-weight:600}
+.line .meta{display:block;font-size:.8rem;color:var(--soft);overflow-wrap:anywhere}
+.amt{font-weight:600;white-space:nowrap}
+.amt.neg{color:var(--red)}
+.amt.pos{color:var(--green)}
+.x{border:0;background:none;color:var(--soft);cursor:pointer;padding:.2rem .1rem;font-size:1rem;line-height:1}
+.x:hover{color:var(--red)}
+.empty{padding:1.6rem 0;color:var(--soft);border-bottom:1px solid var(--rule)}
+.empty b{display:block;color:var(--ink);font-weight:600;margin-bottom:.15rem}
+
+/* settle rows */
+.pay{display:flex;align-items:center;gap:.6rem;padding:.8rem 0;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.pay .arrow{color:var(--blue);font-weight:600}
+.pay .sum{margin-left:auto;font-weight:600;background:linear-gradient(transparent 60%,var(--yellow) 60%);padding:0 .15em}
+.settled{padding:1.4rem 0;border-bottom:1px solid var(--rule);font-weight:600}
+
+/* who-splits picker */
+.who{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.15rem}
+.who label{
+  margin:0;display:inline-flex;align-items:center;gap:.35rem;font-size:.86rem;font-weight:500;color:var(--ink);
+  border:1.5px solid var(--rule);border-radius:2rem;padding:.28rem .6rem;cursor:pointer;background:#fff;
+}
+.who label:has(input:checked){border-color:var(--blue);background:var(--blue-wash)}
+.who input{accent-color:var(--blue);margin:0}
+.tick{display:flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:500;color:var(--ink);margin:0}
+.tick input{accent-color:var(--blue);width:1.05rem;height:1.05rem;margin:0;flex:none}
+.packed .name{opacity:.5;text-decoration:line-through}
+details.adder{border:1.5px solid var(--ink);border-radius:.6rem;background:#fff;margin-bottom:1.1rem}
+details.adder summary{padding:.75rem 1rem;font-weight:600;cursor:pointer;list-style:none}
+details.adder summary::-webkit-details-marker{display:none}
+details.adder summary::before{content:"+ ";color:var(--blue)}
+details.adder[open] summary::before{content:"– "}
+details.adder .body{padding:0 1rem 1rem}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+
+<!-- ============ START ============ -->
+<section id="start" class="start wrap hidden">
+  <div>
+    <h1>Who owes<br>who, <em>settled</em>.</h1>
+    <p class="lede">Log what everyone paid and what everyone carried. Get the shortest list of payments that makes it fair.</p>
+  </div>
+
+  <div class="card">
+    <h2>Start a tab</h2>
+    <div class="field">
+      <label for="g-name">What's the plan called?</label>
+      <input id="g-name" type="text" placeholder="Beach day" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="g-cur">Currency symbol</label>
+      <input id="g-cur" type="text" value="$" maxlength="8">
+    </div>
+    <div class="field">
+      <label for="g-people">Everyone's names, one per line</label>
+      <textarea id="g-people" placeholder="Rami&#10;Jana&#10;Karim&#10;…" spellcheck="false"></textarea>
+      <p class="hint" id="count-hint">0 people</p>
+    </div>
+    <button class="btn" id="create">Create the tab</button>
+    <p class="err" id="create-err"></p>
+  </div>
+
+  <div class="card">
+    <h2>Join a tab</h2>
+    <div class="row">
+      <input id="j-code" type="text" placeholder="Code, e.g. K7QP2M" autocomplete="off" spellcheck="false"
+             autocapitalize="characters" style="text-transform:uppercase">
+      <button class="btn ghost" id="join" style="flex:0 0 auto;width:auto">Open</button>
+    </div>
+    <p class="err" id="join-err"></p>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<main id="app" class="wrap hidden">
+  <header class="top">
+    <h1 id="title">…</h1>
+    <button class="chip" id="share" title="Copy the link for your friends">Copy invite link</button>
+  </header>
+
+  <div class="tally">
+    <div class="big" id="total">—</div>
+    <p class="sub" id="tally-sub"></p>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="settle" aria-selected="true">Settle up</button>
+    <button role="tab" data-tab="spending" aria-selected="false">Spending</button>
+    <button role="tab" data-tab="bringing" aria-selected="false">Bringing</button>
+    <button role="tab" data-tab="crew" aria-selected="false">Crew</button>
+  </nav>
+
+  <!-- SETTLE -->
+  <section data-panel="settle">
+    <div class="ledger" id="transfers"></div>
+    <h2 style="font-size:1.05rem;margin:1.6rem 0 .5rem">Where everyone stands</h2>
+    <div class="ledger" id="standings"></div>
+  </section>
+
+  <!-- SPENDING -->
+  <section data-panel="spending" class="hidden">
+    <details class="adder" id="exp-adder">
+      <summary>Add an expense</summary>
+      <div class="body">
+        <div class="field">
+          <label for="e-label">What was it for?</label>
+          <input id="e-label" type="text" placeholder="Taxi to the beach" autocomplete="off">
+        </div>
+        <div class="row field">
+          <div>
+            <label for="e-amount">Amount</label>
+            <input id="e-amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+          </div>
+          <div>
+            <label for="e-payer">Paid by</label>
+            <select id="e-payer"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Split between <button type="button" class="chip small" id="e-all" style="float:right;font-size:.72rem;padding:.15rem .55rem">Everyone</button></label>
+          <div class="who" id="e-who"></div>
+        </div>
+        <button class="btn" id="add-expense">Add expense</button>
+        <p class="err" id="exp-err"></p>
+      </div>
+    </details>
+    <div class="ledger" id="expenses"></div>
+  </section>
+
+  <!-- BRINGING -->
+  <section data-panel="bringing" class="hidden">
+    <details class="adder" id="item-adder">
+      <summary>Add something someone brings</summary>
+      <div class="body">
+        <div class="row field">
+          <div style="flex:2">
+            <label for="i-label">What are they bringing?</label>
+            <input id="i-label" type="text" placeholder="Ice bags" autocomplete="off">
+          </div>
+          <div style="flex:1">
+            <label for="i-qty">How many</label>
+            <input id="i-qty" type="text" placeholder="4" autocomplete="off">
+          </div>
+        </div>
+        <div class="row field">
+          <div>
+            <label for="i-member">Brought by</label>
+            <select id="i-member"></select>
+          </div>
+          <div>
+            <label for="i-cost">What it cost them</label>
+            <input id="i-cost" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <label class="tick field"><input type="checkbox" id="i-counted" checked> Count that cost in the money split</label>
+        <button class="btn" id="add-item">Add to the list</button>
+        <p class="err" id="item-err"></p>
+      </div>
+    </details>
+    <div class="ledger" id="items"></div>
+  </section>
+
+  <!-- CREW -->
+  <section data-panel="crew" class="hidden">
+    <details class="adder" id="crew-adder">
+      <summary>Add people</summary>
+      <div class="body">
+        <div class="field">
+          <label for="m-names">One name per line</label>
+          <textarea id="m-names" style="min-height:5rem" spellcheck="false"></textarea>
+        </div>
+        <button class="btn" id="add-members">Add them</button>
+        <p class="err" id="crew-err"></p>
+      </div>
+    </details>
+    <div class="ledger" id="crew"></div>
+  </section>
+</main>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+let S = null;                       // server state
+let code = (location.pathname.match(/^\/g\/([^\/]+)/) || [])[1] || null;
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = c => (S ? S.currency : '$') + (c / 100).toFixed(2);
+const lines = t => t.split('\n').map(x => x.trim()).filter(Boolean);
+
+async function api(path, method = 'GET', body) {
+  const r = await fetch(path, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || 'Something went wrong. Try again.');
+  return data;
+}
+
+function busy(btn, fn) {
+  return async (...a) => {
+    btn.disabled = true;
+    try { await fn(...a); } finally { btn.disabled = false; }
+  };
+}
+const show = (el, msg) => { el.textContent = msg; };
+
+/* ---------------- start screen ---------------- */
+$('#g-people').addEventListener('input', e => {
+  const n = lines(e.target.value).length;
+  $('#count-hint').textContent = n === 1 ? '1 person' : n + ' people';
+});
+
+$('#create').onclick = busy($('#create'), async () => {
+  show($('#create-err'), '');
+  const names = lines($('#g-people').value);
+  if (names.length < 2) return show($('#create-err'), 'Add at least two names so there is something to split.');
+  try {
+    const g = await api('/api/groups', 'POST', {
+      name: $('#g-name').value, currency: $('#g-cur').value || '$', members: names
+    });
+    code = g.code;
+    history.pushState({}, '', '/g/' + code);
+    boot(g);
+  } catch (e) { show($('#create-err'), e.message); }
+});
+
+$('#join').onclick = busy($('#join'), async () => {
+  show($('#join-err'), '');
+  const c = $('#j-code').value.trim().toUpperCase();
+  if (!c) return show($('#join-err'), 'Type the code your friend sent you.');
+  try {
+    const g = await api('/api/groups/' + encodeURIComponent(c));
+    code = g.code;
+    history.pushState({}, '', '/g/' + code);
+    boot(g);
+  } catch (e) { show($('#join-err'), e.message); }
+});
+$('#j-code').addEventListener('keydown', e => { if (e.key === 'Enter') $('#join').click(); });
+
+/* ---------------- tabs ---------------- */
+$$('[role=tab]').forEach(t => t.onclick = () => {
+  $$('[role=tab]').forEach(o => o.setAttribute('aria-selected', String(o === t)));
+  $$('[data-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== t.dataset.tab));
+});
+
+$('#share').onclick = async () => {
+  const url = location.origin + '/g/' + code;
+  try { await navigator.clipboard.writeText(url); $('#share').textContent = 'Link copied'; }
+  catch { $('#share').textContent = 'Code ' + code; }
+  setTimeout(() => $('#share').textContent = code + ' · copy link', 2000);
+};
+
+/* ---------------- render ---------------- */
+function boot(data) {
+  $('#start').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  render(data);
+}
+
+function render(data) {
+  S = data;
+  document.title = S.name + ' · The Tab';
+  $('#title').textContent = S.name;
+  $('#share').textContent = S.code + ' · copy link';
+  $('#total').textContent = money(S.total);
+  $('#tally-sub').innerHTML = `spent by <b>${S.members.length}</b> people · <b>${money(S.per_head)}</b> a head`;
+
+  // settle
+  $('#transfers').innerHTML = S.transfers.length
+    ? S.transfers.map(t => `<div class="pay"><span>${esc(t.from)}</span>
+        <span class="arrow">pays</span><span>${esc(t.to)}</span>
+        <span class="sum">${money(t.cents)}</span></div>`).join('')
+    : (S.total ? `<div class="settled">All square. Nobody owes anybody.</div>`
+               : `<div class="empty"><b>Nothing on the tab yet</b>Add an expense and the payments will show up here.</div>`);
+
+  $('#standings').innerHTML = S.members.map(m => {
+    const b = m.balance;
+    const note = b > 0 ? 'is owed' : b < 0 ? 'owes' : 'is square';
+    const cls = b > 0 ? 'pos' : b < 0 ? 'neg' : '';
+    return `<div class="line"><span class="name"><strong>${esc(m.name)}</strong>
+      <span class="meta">paid ${money(m.paid)} · share ${money(m.owed)}</span></span>
+      <span class="amt ${cls}">${b === 0 ? note : note + ' ' + money(Math.abs(b))}</span></div>`;
+  }).join('');
+
+  // spending
+  $('#expenses').innerHTML = S.expenses.length ? S.expenses.map(e => {
+    const all = e.share_ids.length === S.members.length;
+    const who = all ? 'split by everyone'
+      : 'split by ' + e.share_ids.map(id => (S.members.find(m => m.id === id) || {}).name).filter(Boolean).join(', ');
+    return `<div class="line"><span class="name"><strong>${esc(e.label)}</strong>
+      <span class="meta">${esc(e.payer)} paid · ${esc(who)}</span></span>
+      <span class="amt">${money(e.cents)}</span>
+      <button class="x" data-del-exp="${e.id}" aria-label="Delete ${esc(e.label)}">✕</button></div>`;
+  }).join('') : `<div class="empty"><b>No expenses yet</b>Add the first one above.</div>`;
+
+  // bringing
+  $('#items').innerHTML = S.items.length ? S.items.map(i => `
+    <div class="line ${i.packed ? 'packed' : ''}">
+      <input type="checkbox" ${i.packed ? 'checked' : ''} data-pack="${i.id}"
+             style="accent-color:var(--blue);width:1.1rem;height:1.1rem;flex:none;align-self:center"
+             aria-label="Mark ${esc(i.label)} as brought">
+      <span class="name"><strong>${esc(i.label)}${i.qty ? ' ×' + esc(i.qty) : ''}</strong>
+        <span class="meta">${esc(i.member)}${i.cents ? ' · ' + money(i.cents) + (i.counted ? ' in the split' : ' on them') : ' · no cost'}</span></span>
+      <button class="x" data-del-item="${i.id}" aria-label="Delete ${esc(i.label)}">✕</button>
+    </div>`).join('') : `<div class="empty"><b>Nothing on the packing list</b>Add who's bringing the ice, the speaker, the chairs.</div>`;
+
+  // crew
+  $('#crew').innerHTML = S.members.map(m => `<div class="line">
+      <span class="name"><strong>${esc(m.name)}</strong></span>
+      <button class="x" data-del-mem="${m.id}" aria-label="Remove ${esc(m.name)}">✕</button></div>`).join('');
+
+  // selects + split picker
+  const opts = S.members.map(m => `<option value="${m.id}">${esc(m.name)}</option>`).join('');
+  for (const sel of ['#e-payer', '#i-member']) {
+    const keep = $(sel).value;
+    $(sel).innerHTML = opts;
+    if (keep && S.members.some(m => String(m.id) === keep)) $(sel).value = keep;
+  }
+  const checked = new Set($$('#e-who input:checked').map(i => i.value));
+  const first = !$('#e-who').children.length;
+  $('#e-who').innerHTML = S.members.map(m =>
+    `<label><input type="checkbox" value="${m.id}" ${first || checked.has(String(m.id)) ? 'checked' : ''}>${esc(m.name)}</label>`
+  ).join('');
+}
+
+/* ---------------- actions ---------------- */
+document.addEventListener('click', async ev => {
+  const t = ev.target;
+  const hit = (a) => t.closest(`[${a}]`)?.getAttribute(a);
+  try {
+    if (hit('data-del-exp')) render(await api(`/api/groups/${code}/expenses/${hit('data-del-exp')}`, 'DELETE'));
+    else if (hit('data-del-item')) render(await api(`/api/groups/${code}/items/${hit('data-del-item')}`, 'DELETE'));
+    else if (hit('data-del-mem')) render(await api(`/api/groups/${code}/members/${hit('data-del-mem')}`, 'DELETE'));
+  } catch (e) { alert(e.message); }
+});
+
+document.addEventListener('change', async ev => {
+  const id = ev.target.getAttribute('data-pack');
+  if (!id) return;
+  try { render(await api(`/api/groups/${code}/items/${id}`, 'PATCH', { packed: ev.target.checked })); }
+  catch (e) { alert(e.message); }
+});
+
+$('#e-all').onclick = () => {
+  const boxes = $$('#e-who input');
+  const turnOn = boxes.some(b => !b.checked);
+  boxes.forEach(b => b.checked = turnOn);
+};
+
+$('#add-expense').onclick = busy($('#add-expense'), async () => {
+  show($('#exp-err'), '');
+  try {
+    const data = await api(`/api/groups/${code}/expenses`, 'POST', {
+      label: $('#e-label').value,
+      amount: $('#e-amount').value,
+      payer_id: Number($('#e-payer').value),
+      share_ids: $$('#e-who input:checked').map(i => Number(i.value))
+    });
+    $('#e-label').value = ''; $('#e-amount').value = '';
+    render(data);
+  } catch (e) { show($('#exp-err'), e.message); }
+});
+
+$('#add-item').onclick = busy($('#add-item'), async () => {
+  show($('#item-err'), '');
+  try {
+    const data = await api(`/api/groups/${code}/items`, 'POST', {
+      label: $('#i-label').value,
+      qty: $('#i-qty').value,
+      member_id: Number($('#i-member').value),
+      amount: $('#i-cost').value || 0,
+      counted: $('#i-counted').checked
+    });
+    $('#i-label').value = ''; $('#i-qty').value = ''; $('#i-cost').value = '';
+    render(data);
+  } catch (e) { show($('#item-err'), e.message); }
+});
+
+$('#add-members').onclick = busy($('#add-members'), async () => {
+  show($('#crew-err'), '');
+  try {
+    const data = await api(`/api/groups/${code}/members`, 'POST', { names: lines($('#m-names').value) });
+    $('#m-names').value = '';
+    render(data);
+  } catch (e) { show($('#crew-err'), e.message); }
+});
+
+/* ---------------- init ---------------- */
+(async () => {
+  if (code) {
+    try { boot(await api('/api/groups/' + encodeURIComponent(code))); return; }
+    catch { history.replaceState({}, '', '/'); code = null; }
+  }
+  $('#start').classList.remove('hidden');
+})();
+</script>
+</body>
+</html>
